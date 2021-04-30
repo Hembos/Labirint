@@ -4,8 +4,8 @@
 
 using namespace sf;
 
-Labirint::Labirint(int height, int weight, int size)
-	: height(height), weight(weight), size(size)
+Labirint::Labirint(Vector2i startPos, Vector2i endPos, int height, int weight, int size)
+	: height(height), weight(weight), size(size), startPos(startPos), endPos(endPos)
 {
 	textureWall.loadFromFile("src/Wall.png");
 	spriteWall.setTexture(textureWall);
@@ -14,6 +14,14 @@ Labirint::Labirint(int height, int weight, int size)
 	texturePath.loadFromFile("src/Path.png");
 	spritePath.setTexture(texturePath);
 	spritePath.setTextureRect(IntRect(0, 0, size, size));
+
+	textureStart.loadFromFile("src/Start.png");
+	spriteStart.setTexture(textureStart);
+	spriteStart.setTextureRect(IntRect(0, 0, size, size));
+
+	textureEnd.loadFromFile("src/End.png");
+	spriteEnd.setTexture(textureEnd);
+	spriteEnd.setTextureRect(IntRect(0, 0, size, size));
 
 	srand(time(0));
 	for (int i = 0; i < height; i++)
@@ -35,12 +43,12 @@ Labirint::Labirint(int height, int weight, int size)
 		visit.push_back(tmp1);
 		labirint.push_back(tmp);
 	}
-	if (labirint[0][0] == 1)
+	if (labirint[startPos.y][startPos.x] == 1)
 	{
-		labirint[0][0] = 0;
+		labirint[startPos.y][startPos.x] = 0;
 	}
-	visit[0][0] = 1;
-	Queue.push(Vector2i(0, 0));
+	visit[startPos.y][startPos.x] = 1;
+	
 }
 
 void Labirint::draw(RenderWindow& window)
@@ -54,12 +62,15 @@ void Labirint::draw(RenderWindow& window)
 				spriteWall.setPosition(Vector2f(size * j, size * i));
 				window.draw(spriteWall);
 			}
+			
 		}
 	}
 }
 
 void Labirint::BFS()
 {
+	Queue.push(startPos);
+
 	while (!Queue.empty())
 	{
 		Vector2i currentPos = Queue.front();
@@ -68,7 +79,6 @@ void Labirint::BFS()
 		int x = currentPos.x;
 		int y = currentPos.y;
 
-	
 		if ((y + 1) < height && !visit[y + 1][x] && labirint[y + 1][x] == 0) 
 		{
 			visit[y + 1][x] = visit[y][x] + 1;
@@ -107,9 +117,9 @@ void Labirint::print()
 
 void Labirint::drawPath(RenderWindow& window)
 {
-	int end = visit[height - 1][weight - 1];
-	int i = height - 1;
-	int j = weight - 1;
+	int end = visit[endPos.y][endPos.x];
+	int i = endPos.y;
+	int j = endPos.x;
 	if (end != 0)
 	{
 		while (end != 1)
@@ -141,12 +151,38 @@ void Labirint::drawPath(RenderWindow& window)
 				continue;
 			}
 		}
-		spritePath.setPosition(Vector2f(0, 0));
+		spritePath.setPosition(Vector2f(size * startPos.x, size * startPos.y));
 		window.draw(spritePath);
 	}
-	else
+
+	spriteStart.setPosition(Vector2f(size * startPos.x, size * startPos.y));
+	window.draw(spriteStart);
+	spriteEnd.setPosition(Vector2f(size * endPos.x, size * endPos.y));
+	window.draw(spriteEnd);
+}
+
+void Labirint::setStartPos(sf::Vector2i startPos) 
+{
+	if (labirint[startPos.y][startPos.x] == 0)
 	{
-		std::cout << std::endl;
-		std::cout << "There is no path";
+		this->startPos = startPos;
+
+		for (int i = 0; i < height; i++)
+		{
+			for (int j = 0; j < weight; j++)
+			{
+				visit[i][j] = 0;
+			}
+		}
+
+		visit[startPos.y][startPos.x] = 1;
+	}
+}
+
+void Labirint::setEndPos(sf::Vector2i endPos)
+{
+	if (labirint[endPos.y][endPos.x] == 0)
+	{
+		this->endPos = endPos;
 	}
 }
