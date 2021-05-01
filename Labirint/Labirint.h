@@ -23,11 +23,13 @@ private:
 	sf::Vector2i startPos;
 	sf::Vector2i endPos;
 public:
-	Labirint(sf::Vector2i startPos, sf::Vector2i endPos, int height = 10, int weight = 10, int size = 20);
+	Labirint(int height = 10, int weight = 10, int size = 20);
 	void draw(sf::RenderWindow& window);
 	void BFS();
 	void print();
 	void drawPath(sf::RenderWindow& window);
 	void setStartPos(sf::Vector2i startPos);
 	void setEndPos(sf::Vector2i endPos);
+	void createRandomLab();
+	void createLabirint(sf::Vector2i pos, sf::RenderWindow& window);
 };

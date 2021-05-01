@@ -1,10 +1,13 @@
 #pragma once
 #include "Labirint.h"
+#include "Button.h"
 
 enum class Mode
 {
-	placementPos,
+	placementPosStart,
+	placementPosEnd,
 	pathBuilding,
+	createLabirint,
 	stop
 };
 
@@ -15,6 +18,12 @@ private:
 	Labirint* labirint;
 	Mode mode;
 	int cellSize;
+	int labHeight;
+	int labWeight;
+	Button* setStartBut;
+	Button* setEndBut;
+	Button* randomBut;
+	Button* drawBut;
 public:
 	Scene();
 	void start();
