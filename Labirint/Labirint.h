@@ -18,12 +18,12 @@ private:
 	std::vector<std::vector<int>> visit;
 	std::queue<sf::Vector2i> Queue;
 	int height;
-	int weight;
+	int width;
 	int size;
 	sf::Vector2i startPos;
 	sf::Vector2i endPos;
 public:
-	Labirint(int height, int weight, int size);
+	Labirint(int height, int width, int size);
 	void draw(sf::RenderWindow& window);
 	void BFS();
 	void print();
@@ -34,4 +34,5 @@ public:
 	void createLabirint(sf::Vector2i pos);
 	void clear();
 	void erase(sf::Vector2i pos);
+	void prim();
 };

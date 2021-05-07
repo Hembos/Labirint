@@ -4,26 +4,58 @@
 
 using namespace std;
 
+int getNum()
+{
+	string nums = "0123456789";
+	string str;
+	int res = 0;
+
+	cin >> str;
+
+	for (const char& c : str)
+	{
+		if (nums.find(c) == string::npos)
+		{
+			throw "Wrong data";
+		}
+	}
+
+	res = stoi(str);
+
+	return res;
+}
+
 int main()
 {
 	string s;
 	
+	cout << "Enter help to open the command list" << endl;
+
 	while (1)
 	{
-		cout << "Enter help to open the command list" << endl;
-		cin >> s;
+		if (!(cin >> s))
+		{
+			break;
+		}
 		if (s == "start")
 		{
-			int cellSize, height, weight;
-			cout << "Enter cell size: ";
-			cin >> cellSize;
-			cout << "Enter the height of the maze: ";
-			cin >> height;
-			cout << "Enter the width of the maze: ";
-			cin >> weight;
+			try
+			{
+				int cellSize, height, width;
+				cout << "Enter cell size: ";
+				cellSize = getNum();
+				cout << "Enter the height of the maze: ";
+				height = getNum();
+				cout << "Enter the width of the maze: ";
+				width = getNum();
 
-			Scene scene(cellSize, height, weight);
-			scene.start();
+				Scene scene(cellSize, height, width);
+				scene.start();
+			}
+			catch (const char* s)
+			{
+				cout << s << endl;
+			}
 		}
 		else if (s == "exit")
 		{
@@ -31,18 +63,12 @@ int main()
 		}
 		else if (s == "help")
 		{
-			
+			cout << "Enter start to start working with the maze" << endl;
+			cout << "Enter exit to exit the program" << endl;
 		}
-		else if (s == "Examples")
+		else
 		{
-			int example;
-			cin >> example;
-			switch (example)
-			{
-
-			default:
-				break;
-			}
+			cout << "Command not found" << endl;
 		}
 	}
 	

@@ -97,8 +97,8 @@ void Scene::start()
 					}
 					if (randomBut->isPressed(Vector2i(event.mouseButton.x, event.mouseButton.y)))
 					{
-						labirint->createRandomLab();
-
+						//labirint->createRandomLab();
+						labirint->prim();
 						window->clear();
 
 						labirint->draw(*window);

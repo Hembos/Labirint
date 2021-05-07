@@ -1,11 +1,12 @@
 #include "Labirint.h"
 #include <ctime>
 #include <iostream>
+#include <fstream>
 
 using namespace sf;
 
-Labirint::Labirint(int height, int weight, int size)
-	: height(height), weight(weight), size(size), startPos(Vector2i(-1, -1)), endPos(Vector2i(-1, -1))
+Labirint::Labirint(int height, int width, int size)
+	: height(height), width(width), size(size), startPos(Vector2i(-1, -1)), endPos(Vector2i(-1, -1))
 {
 	textureWall.loadFromFile("src/Wall.png");
 	spriteWall.setTexture(textureWall);
@@ -26,7 +27,7 @@ Labirint::Labirint(int height, int weight, int size)
 	for (int i = 0; i < height; i++)
 	{
 		std::vector<int> tmp, tmp1;
-		for (int j = 0; j < weight; j++)
+		for (int j = 0; j < width; j++)
 		{
 			tmp1.push_back(0);
 			tmp.push_back(0);
@@ -41,7 +42,7 @@ void Labirint::draw(RenderWindow& window)
 {
 	for (int i = 0; i < height; i++)
 	{
-		for (int j = 0; j < weight; j++)
+		for (int j = 0; j < width; j++)
 		{
 			if (labirint[i][j] == 1)
 			{
@@ -77,7 +78,7 @@ void Labirint::BFS()
 				visit[y - 1][x] = visit[y][x] + 1;
 				Queue.push(Vector2i(x, y - 1));
 			}
-			if ((x + 1) < weight && !visit[y][x + 1] && labirint[y][x + 1] == 0)
+			if ((x + 1) < width && !visit[y][x + 1] && labirint[y][x + 1] == 0)
 			{
 				visit[y][x + 1] = visit[y][x] + 1;
 				Queue.push(Vector2i(x + 1, y));
@@ -95,7 +96,7 @@ void Labirint::print()
 {
 	for (int i = 0; i < height; i++)
 	{
-		for (int j = 0; j < weight; j++)
+		for (int j = 0; j < width; j++)
 		{
 			std::cout << visit[i][j] << " ";
 		}
@@ -166,7 +167,7 @@ void Labirint::setStartPos(sf::Vector2i startPos)
 
 		for (int i = 0; i < height; i++)
 		{
-			for (int j = 0; j < weight; j++)
+			for (int j = 0; j < width; j++)
 			{
 				visit[i][j] = 0;
 			}
@@ -190,7 +191,7 @@ void Labirint::createRandomLab()
 
 	for (int i = 0; i < height; i++)
 	{
-		for (int j = 0; j < weight; j++)
+		for (int j = 0; j < width; j++)
 		{
 			int k = rand() % 100;
 			if (k <= 20)
@@ -217,7 +218,7 @@ void Labirint::createLabirint(Vector2i pos)
 
 	for (int i = 0; i < height; i++)
 	{
-		for (int j = 0; j < weight; j++)
+		for (int j = 0; j < width; j++)
 		{
 			visit[i][j] = 0;
 		}
@@ -233,7 +234,7 @@ void Labirint::clear()
 {
 	for (int i = 0; i < height; i++)
 	{
-		for (int j = 0; j < weight; j++)
+		for (int j = 0; j < width; j++)
 		{
 			visit[i][j] = 0;
 			labirint[i][j] = 0;
@@ -253,7 +254,7 @@ void Labirint::erase(Vector2i pos)
 
 	for (int i = 0; i < height; i++)
 	{
-		for (int j = 0; j < weight; j++)
+		for (int j = 0; j < width; j++)
 		{
 			visit[i][j] = 0;
 		}
@@ -263,4 +264,113 @@ void Labirint::erase(Vector2i pos)
 	{
 		visit[startPos.y][startPos.x] = 1;
 	}
+}
+
+void Labirint::prim()
+{
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			labirint[i][j] = 1;
+		}
+	}
+
+	srand(time(0));
+
+	int x = (rand() % (width / 2)) * 2 + 1;
+	int y = (rand() % (height / 2)) * 2 + 1;
+	labirint[y][x] = 0;
+
+	std::vector<Vector2i> to_check;
+	if (y - 2 >= 0) {
+		to_check.push_back(Vector2i(x, y - 2));
+	}
+	if (y + 2 < height) {
+		to_check.push_back(Vector2i(x, y + 2));
+	}
+	if (x - 2 >= 0) {
+		to_check.push_back(Vector2i(x - 2, y));
+	}
+	if (x + 2 < width) {
+		to_check.push_back(Vector2i(x + 2, y));
+	}
+
+	while (to_check.size() > 0)
+	{
+		int index = rand() % (to_check.size());
+		Vector2i cell = to_check[index];
+		x = cell.x;
+		y = cell.y;
+		labirint[y][x] = 0;
+		to_check.erase(to_check.begin() + index);
+
+		std::vector<int> d = { 0, 1, 2, 3 };
+		while (d.size() > 0)
+		{
+			int dIndex = rand() % (d.size());
+			switch (d[dIndex])
+			{
+			case 0: // верх
+				if (y - 2 >= 0 && labirint[y - 2][x] == 0)
+				{
+					labirint[y - 1][x] = 0;
+					d.clear();
+				}
+				break;
+			case 1: // низ
+				if (y + 2 < height && labirint[y + 2][x] == 0)
+				{
+					labirint[y + 1][x] = 0;
+					d.clear();
+				}
+				break;
+			case 2: // право
+				if (x - 2 >= 0 && labirint[y][x] == 0)
+				{
+					labirint[y][x - 1] = 0;
+					d.clear();
+				}
+				break;
+			case 3: // лево
+				if (x + 2 < width && labirint[y][x + 2] == 0)
+				{
+					labirint[y][x + 1] = 0;
+					d.clear();
+				}
+				break;
+			default:
+				break;
+			}
+			if (d.size() != 0)
+			{
+				d.erase(d.begin() + dIndex);
+			}
+		}
+
+		if (y - 2 >= 0 && labirint[y - 2][x] == 1) {
+			to_check.push_back(Vector2i(x, y - 2));
+		}
+		if (y + 2 < height && labirint[y + 2][x] == 1) {
+			to_check.push_back(Vector2i(x, y + 2));
+		}
+		if (x - 2 >= 0 && labirint[y][x - 2] == 1) {
+			to_check.push_back(Vector2i(x - 2, y));
+		}
+		if (x + 2 < width && labirint[y][x + 2] == 1) {
+			to_check.push_back(Vector2i(x + 2, y));
+		}
+	}
+
+	for (int i = 0; i < height; i++)
+	{
+		labirint[i][width - 1] = 1;
+	}
+	for (int i = 0; i < width; i++)
+	{
+		labirint[height - 1][i] = 1;
+	}
+
+	startPos = Vector2i(-1, -1);
+	endPos = Vector2i(-1, -1);
 }
