@@ -8,6 +8,7 @@ enum class Mode
 	placementPosEnd,
 	pathBuilding,
 	createLabirint,
+	eraseLabirint,
 	stop
 };
 
@@ -24,7 +25,12 @@ private:
 	Button* setEndBut;
 	Button* randomBut;
 	Button* drawBut;
+	Button* eraseBut;
+	Button* eraseOneBut;
+	Button* newBut;
 public:
-	Scene();
+	Scene(int cellSize, int labHeight, int labWeight);
 	void start();
+private:
+	void drawButtons();
 };

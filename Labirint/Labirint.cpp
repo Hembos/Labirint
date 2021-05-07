@@ -55,7 +55,7 @@ void Labirint::draw(RenderWindow& window)
 
 void Labirint::BFS()
 {
-	if (startPos != Vector2i(-1, -1))
+	if (startPos != Vector2i(-1, -1) && endPos != Vector2i(-1, -1))
 	{
 		Queue.push(startPos);
 
@@ -87,10 +87,8 @@ void Labirint::BFS()
 				visit[y][x - 1] = visit[y][x] + 1;
 				Queue.push(Vector2i(x - 1, y));
 			}
-
 		}
 	}
-	
 }
 
 void Labirint::print()
@@ -210,7 +208,7 @@ void Labirint::createRandomLab()
 	endPos = Vector2i(-1, -1);
 }
 
-void Labirint::createLabirint(Vector2i pos, RenderWindow& window)
+void Labirint::createLabirint(Vector2i pos)
 {
 	pos.x /= size;
 	pos.y /= size;
@@ -225,6 +223,42 @@ void Labirint::createLabirint(Vector2i pos, RenderWindow& window)
 		}
 	}
 	
+	if (startPos != Vector2i(-1, -1))
+	{
+		visit[startPos.y][startPos.x] = 1;
+	}
+}
+
+void Labirint::clear()
+{
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < weight; j++)
+		{
+			visit[i][j] = 0;
+			labirint[i][j] = 0;
+		}
+	}
+
+	startPos = Vector2i(-1, -1);
+	endPos = Vector2i(-1, -1);
+}
+
+void Labirint::erase(Vector2i pos)
+{
+	pos.x /= size;
+	pos.y /= size;
+
+	labirint[pos.y][pos.x] = 0;
+
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < weight; j++)
+		{
+			visit[i][j] = 0;
+		}
+	}
+
 	if (startPos != Vector2i(-1, -1))
 	{
 		visit[startPos.y][startPos.x] = 1;

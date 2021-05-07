@@ -18,8 +18,8 @@ public:
 		sprite.setTexture(texture);
 		sprite.setTextureRect(sf::IntRect(0, 0, size.x, size.y));
 		sprite.setPosition((sf::Vector2f)pos);
-		sprite.scale(3, 3);
-		this->size = Vector(size.x * 3, size.y * 3);
+		sprite.scale(2, 2);
+		this->size = Vector(size.x * 2, size.y * 2);
 	}
 	void draw(sf::RenderWindow& window) { window.draw(sprite); }
 	bool isPressed(Vector mousePos)
